@@ -1,0 +1,5 @@
+note: i noticed that the category and the book url they dont connect, but i am not sure in database
+the first category: https://elibrary.abudlc.edu.ng/categories/1
+the last category: https://elibrary.abudlc.edu.ng/categories/67
+the first book: https://elibrary.abudlc.edu.ng/books/1
+the last book: https://elibrary.abudlc.edu.ng/books/7636

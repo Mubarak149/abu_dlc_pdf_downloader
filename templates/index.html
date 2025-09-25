@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABU DLC PDF Downloader</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        #loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>PDF Downloader</h1>
+    <form id="downloadForm">
+        <label for="pdf_link">Paste PDF Link:</label>
+        <input type="text" id="pdf_link" name="pdf_link" placeholder="Enter the PDF link" required>
+        <button type="submit">Download</button>
+    </form>
+    <div id="loading">Loading... Please wait.</div>
+
+    <script>
+        document.getElementById('downloadForm').addEventListener('submit', async function (e) {
+            e.preventDefault(); // Prevent default form submission
+            const loadingSpinner = document.getElementById('loading');
+            const form = e.target;
+            const formData = new FormData(form);
+
+            // Show the loading spinner
+            loadingSpinner.style.display = 'block';
+
+            try {
+                // Send the form data using fetch
+                const response = await fetch('/download', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Check for success
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+
+                    // Get the file name from the response
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    const fileName = contentDisposition
+                        ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+                        : 'downloaded_file.pdf';
+
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                } else {
+                    alert('Failed to download the file.');
+                }
+            } catch (error) {
+                alert('An error occurred: ' + error.message);
+            } finally {
+                // Hide the loading spinner
+                loadingSpinner.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
